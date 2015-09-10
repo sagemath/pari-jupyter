@@ -26,17 +26,15 @@ from ipykernel.iostream import OutStream
 from libc.signal cimport SIGALRM, SIGINT
 from posix.signal cimport sigaction, sigaction_t
 
+DEF PARISIZE = 2**27
+DEF PRIMELIMIT = 500000
+
 
 # Global setjmp() context for error handling
 cdef sigjmp_buf context
 
 cdef void pari_recover(long numerr) nogil:
     siglongjmp(context, -1)
-
-
-cdef void signal_handler(int signum) nogil:
-    if signum == SIGINT:
-        siglongjmp(context, SIGINT)
 
 
 cdef void out_putch(char c) nogil:
@@ -91,7 +89,7 @@ class PARIKernel(Kernel):
     banner = "PARI kernel"
 
     def __init__(self, *args, **kwds):
-        pari_init_opts(1<<27, 500000, INIT_DFTm)
+        pari_init_opts(PARISIZE, PRIMELIMIT, INIT_SIGm | INIT_DFTm)
         global cb_pari_err_recover, pariOut, pariErr
         cb_pari_err_recover = pari_recover
         pariOut = &PARIKernelOut
@@ -118,15 +116,15 @@ class PARIKernel(Kernel):
         cdef sigaction_t sa
         cdef sigaction_t old_sa
         memset(&sa, 0, sizeof(sa))
-        sa.sa_handler = signal_handler
+        sa.sa_handler = pari_sighandler
 
         cdef int err
         with nogil:
             err = sigsetjmp(context, 1)
             if err == 0:  # Initial sigsetjmp() call
-                sigaction(SIGINT, &sa, &old_sa)
+                sigaction(SIGINT, &sa, &old_sa)  # Handle SIGINT by PARI
                 result = gp_read_str(gp_code)
-            sigaction(SIGINT, &old_sa, &sa)
+            sigaction(SIGINT, &old_sa, &sa)      # Restore Python SIGINT handler
 
         if not err:  # success
             # gnil as a result is like Python's None, it should be
@@ -148,8 +146,6 @@ class PARIKernel(Kernel):
                     'user_expressions': {},
                    }
         else:  # error (therefore no result)
-            if err == SIGINT:
-                stderr_stream.write("Interrupted\n")
             reply = {'status': 'error',
                     # The base class increments the execution count
                     'execution_count': self.execution_count,

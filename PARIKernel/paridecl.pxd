@@ -11,6 +11,7 @@ cdef extern from "pari/pari.h" nogil:
     int     INIT_JMPm, INIT_SIGm, INIT_DFTm, INIT_noPRIMEm, INIT_noIMTm
     void    pari_init_opts(size_t parisize, ulong maxprime, ulong init_opts)
     void    pari_init(size_t parisize, ulong maxprime)
+    void    pari_sighandler(int sig)
 
     void    (*cb_pari_err_recover)(long)
 
