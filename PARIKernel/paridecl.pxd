@@ -5,6 +5,9 @@ cdef extern from "pari/pari.h" nogil:
     ctypedef long* GEN
     ctypedef void* pari_sp
 
+    long    paricfg_version_code
+    long    PARI_VERSION_SHIFT
+
     pari_sp avma
     GEN     gnil
 
@@ -17,7 +20,7 @@ cdef extern from "pari/pari.h" nogil:
 
     void    pari_free(void*)
 
-    GEN     gp_read_str(char *t)
+    GEN     gp_read_file_from_str(char *t)
     char*   GENtostr(GEN x)
 
     struct PariOUT:

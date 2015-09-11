@@ -79,13 +79,24 @@ cdef PyString_FromGEN(GEN g):
     pari_free(s)
     return pystr
 
+def pari_short_version():
+    cdef unsigned long mask = (1<<PARI_VERSION_SHIFT) - 1;
+    cdef unsigned long n = paricfg_version_code
+
+    cdef unsigned long patch = n & mask
+    n >>= PARI_VERSION_SHIFT
+    cdef unsigned long minor = n & mask
+    n >>= PARI_VERSION_SHIFT
+    cdef unsigned long major = n
+    return "{}.{}.{}".format(major, minor, patch)
+
 
 class PARIKernel(Kernel):
     implementation = 'PARI'
     implementation_version = '0.0.0'
     language = 'GP'
-    language_version = '0.1'
-    language_info = {'mimetype': 'text/plain', 'name': 'GP'}
+    language_version = pari_short_version()
+    language_info = dict(mimetype='text/plain', name='GP', file_extension='gp')
     banner = "PARI kernel"
 
     def __init__(self, *args, **kwds):
@@ -123,7 +134,7 @@ class PARIKernel(Kernel):
             err = sigsetjmp(context, 1)
             if err == 0:  # Initial sigsetjmp() call
                 sigaction(SIGINT, &sa, &old_sa)  # Handle SIGINT by PARI
-                result = gp_read_str(gp_code)
+                result = gp_read_file_from_str(gp_code)
             sigaction(SIGINT, &old_sa, &sa)      # Restore Python SIGINT handler
 
         if not err:  # success
