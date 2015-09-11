@@ -3,7 +3,10 @@
 cdef extern from "pari/pari.h" nogil:
     ctypedef unsigned long ulong "pari_ulong"
     ctypedef long* GEN
-    ctypedef void* pari_sp
+    ctypedef unsigned long pari_sp
+
+    ctypedef struct entree:
+        char *help
 
     long    paricfg_version_code
     long    PARI_VERSION_SHIFT
@@ -30,3 +33,4 @@ cdef extern from "pari/pari.h" nogil:
     PariOUT* pariOut
     PariOUT* pariErr
 
+    entree* is_entry(char *s)

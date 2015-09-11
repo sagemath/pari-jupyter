@@ -19,6 +19,7 @@
 
 
 from .paridecl cimport *
+from .paripriv cimport is_keyword_char
 from libc.setjmp cimport *
 from libc.string cimport memset
 from ipykernel.kernelbase import Kernel
@@ -89,6 +90,18 @@ def pari_short_version():
     n >>= PARI_VERSION_SHIFT
     cdef unsigned long major = n
     return "{}.{}.{}".format(major, minor, patch)
+
+cdef inline bint is_keyword_char_python(s) except -1:
+    """
+    Given a Python single-character string ``s``, is it a PARI
+    keyword character?
+    """
+    cdef long c
+    try:
+        c = ord(s)
+    except TypeError:
+        return 0
+    return 32 <= c < 128 and is_keyword_char(c)
 
 
 class PARIKernel(Kernel):
@@ -169,3 +182,36 @@ class PARIKernel(Kernel):
         stdout_stream.flush()
         stderr_stream.flush()
         return reply
+
+    def do_inspect(self, code, cursor_pos, detail_level=0):
+        word = self.__get_keyword(code, cursor_pos)[0]
+        # Possibly rewind if we are right after a "("
+        if not word and cursor_pos > 0 and code[cursor_pos-1] == "(":
+            word = self.__get_keyword(code, cursor_pos-1)[0]
+
+        reply = dict(status="ok", found=False, data={}, metadata={})
+        if not word:
+            return reply
+
+        cdef entree* ep = is_entry(word)
+        if ep == NULL or ep.help == NULL:
+            return reply
+
+        reply["found"] = True
+        reply["data"] = {"text/plain": ep.help}
+        return reply
+
+    def __get_keyword(self, code, pos):
+        """
+        Return a tuple ``(word, start, end)`` such that ``word`` is a
+        PARI "keyword" and ``word = code[start:end]``. The bounds are
+        such that ``start <= pos <= end``.
+        """
+        cdef Py_ssize_t start, end, length = len(code)
+        start = end = pos
+        while start > 0 and is_keyword_char_python(code[start-1]):
+            start -= 1
+        while end < length and is_keyword_char_python(code[end]):
+            end += 1
+        word = code[start:end]
+        return (word, start, end)
