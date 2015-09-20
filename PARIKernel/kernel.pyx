@@ -19,10 +19,10 @@
 
 
 from .paridecl cimport *
-from .paripriv cimport is_keyword_char
+from .paripriv cimport *
 from .io cimport PARIKernelIO
 from libc.setjmp cimport *
-from libc.string cimport memset
+from libc.string cimport memset, strncmp
 from ipykernel.kernelbase import Kernel
 from libc.signal cimport SIGALRM, SIGINT
 from posix.signal cimport sigaction, sigaction_t
@@ -69,6 +69,30 @@ cdef inline bint is_keyword_char_python(s) except -1:
     except TypeError:
         return 0
     return 32 <= c < 128 and is_keyword_char(c)
+
+
+cdef list hashtable_matches(word, size_t prefixlen, entree** hashtable):
+    """
+    Return a list of all words starting with ``word`` in
+    ``hashtable``. The first ``prefixlen`` characters of the returned
+    words are stripped away.
+    """
+    cdef char* cword = word
+    cdef size_t cwordlen = len(word)
+    assert cwordlen >= prefixlen
+
+    # Find word in PARI's hashtable
+    cdef entree* ep
+    cdef list matches = []
+    cdef long i
+    for i in range(functions_tblsz):
+        ep = hashtable[i]
+        while ep != NULL:
+            if strncmp(ep.name, cword, cwordlen) == 0:
+                matches.append(ep.name + prefixlen)
+            ep = ep.next
+
+    return matches
 
 
 class PARIKernel(Kernel):
@@ -140,6 +164,33 @@ class PARIKernel(Kernel):
 
         avma = av
         self.io.flush()
+        return reply
+
+    def do_complete(self, code, cursor_pos):
+        left = code[:cursor_pos]
+        word, start, end = self.__get_keyword(left, cursor_pos)
+
+        # If the word comes after a period, complete members
+        cdef size_t prefixlen = 0
+        if start >= 1 and code[start-1] == '.':
+            word = "_." + word
+            prefixlen = 2
+
+        # Filter matches: first character should not be _
+        # and all characters should be keyword characters
+        cdef list matches = []
+        cdef Py_ssize_t i
+        for m in hashtable_matches(word, prefixlen, functions_hash):
+            if m[0] == '_':    # Skip private functions
+                continue
+            for i in range(len(m)):
+                if not is_keyword_char_python(m[i]):
+                    break
+            else:
+                matches.append(m)
+
+        reply = dict(status="ok", matches=sorted(matches),
+                cursor_start=start, cursor_end=end)
         return reply
 
     def do_inspect(self, code, cursor_pos, detail_level=0):

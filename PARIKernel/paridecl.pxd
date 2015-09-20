@@ -6,7 +6,9 @@ cdef extern from "pari/pari.h" nogil:
     ctypedef unsigned long pari_sp
 
     ctypedef struct entree:
-        char *help
+        entree* next
+        char* name
+        char* help
 
     long    paricfg_version_code
     long    PARI_VERSION_SHIFT
