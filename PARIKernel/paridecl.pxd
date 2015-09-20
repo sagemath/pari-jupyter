@@ -25,7 +25,7 @@ cdef extern from "pari/pari.h" nogil:
 
     void    pari_free(void*)
 
-    GEN     gp_read_file_from_str(char *t)
+    GEN     gp_read_str_multiline(char *t)
     char*   GENtostr(GEN x)
 
     struct PariOUT:

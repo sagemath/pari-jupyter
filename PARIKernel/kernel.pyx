@@ -131,7 +131,7 @@ class PARIKernel(Kernel):
             err = sigsetjmp(context, 1)
             if err == 0:  # Initial sigsetjmp() call
                 sigaction(SIGINT, &sa, &old_sa)  # Handle SIGINT by PARI
-                result = gp_read_file_from_str(gp_code)
+                result = gp_read_str_multiline(gp_code)
             sigaction(SIGINT, &old_sa, &sa)      # Restore Python SIGINT handler
 
         if not err:  # success
