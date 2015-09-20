@@ -20,10 +20,10 @@
 
 from .paridecl cimport *
 from .paripriv cimport is_keyword_char
+from .io cimport PARIKernelIO
 from libc.setjmp cimport *
 from libc.string cimport memset
 from ipykernel.kernelbase import Kernel
-from ipykernel.iostream import OutStream
 from libc.signal cimport SIGALRM, SIGINT
 from posix.signal cimport sigaction, sigaction_t
 
@@ -38,47 +38,13 @@ cdef void pari_recover(long numerr) nogil:
     siglongjmp(context, -1)
 
 
-cdef void out_putch(char c) nogil:
-    cdef char s[2]
-    s[0] = c
-    s[1] = 0
-    out_puts(s)
-
-cdef void out_puts(const char* s) with gil:
-    stdout_stream.write(s)
-
-cdef void out_flush() with gil:
-    stdout_stream.flush()
-
-cdef void err_putch(char c) nogil:
-    cdef char s[2]
-    s[0] = c
-    s[1] = 0
-    err_puts(s)
-
-cdef void err_puts(const char* s) with gil:
-    stderr_stream.write(s)
-
-cdef void err_flush() with gil:
-    stderr_stream.flush()
-
-
-cdef PariOUT PARIKernelOut
-cdef PariOUT PARIKernelErr
-
-PARIKernelOut.putch = out_putch
-PARIKernelOut.puts = out_puts
-PARIKernelOut.flush = out_flush
-PARIKernelErr.putch = err_putch
-PARIKernelErr.puts = err_puts
-PARIKernelErr.flush = err_flush
-
-
-cdef PyString_FromGEN(GEN g):
+# Helper functions
+cdef inline PyString_FromGEN(GEN g):
     cdef char* s = GENtostr(g)
     cdef object pystr = s
     pari_free(s)
     return pystr
+
 
 def pari_short_version():
     cdef unsigned long mask = (1<<PARI_VERSION_SHIFT) - 1;
@@ -90,6 +56,7 @@ def pari_short_version():
     n >>= PARI_VERSION_SHIFT
     cdef unsigned long major = n
     return "{}.{}.{}".format(major, minor, patch)
+
 
 cdef inline bint is_keyword_char_python(s) except -1:
     """
@@ -113,18 +80,12 @@ class PARIKernel(Kernel):
     banner = "PARI kernel"
 
     def __init__(self, *args, **kwds):
+        super(PARIKernel, self).__init__(*args, **kwds)
+
         pari_init_opts(PARISIZE, PRIMELIMIT, INIT_SIGm | INIT_DFTm)
         global cb_pari_err_recover, pariOut, pariErr
         cb_pari_err_recover = pari_recover
-        pariOut = &PARIKernelOut
-        pariErr = &PARIKernelErr
-
-        super(PARIKernel, self).__init__(*args, **kwds)
-        global stdout_stream, stderr_stream
-        stdout_stream = OutStream(self.session, self.iopub_socket,
-                "stdout", pipe=False)
-        stderr_stream = OutStream(self.session, self.iopub_socket,
-                "stderr", pipe=False)
+        self.io = PARIKernelIO(self)
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
@@ -134,8 +95,7 @@ class PARIKernel(Kernel):
         cdef char* result_string
         cdef char* gp_code = code
 
-        stdout_stream.parent_header = self._parent_header
-        stderr_stream.parent_header = self._parent_header
+        self.io.set_parent(self._parent_header)
 
         cdef sigaction_t sa
         cdef sigaction_t old_sa
@@ -179,8 +139,7 @@ class PARIKernel(Kernel):
                    }
 
         avma = av
-        stdout_stream.flush()
-        stderr_stream.flush()
+        self.io.flush()
         return reply
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
