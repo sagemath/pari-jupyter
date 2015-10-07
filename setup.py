@@ -3,9 +3,9 @@
 import os, sysconfig
 from distutils.core import setup
 from Cython.Build import cythonize
+from jupyter_core.paths import ENV_JUPYTER_PATH
 
-kernelpath = os.path.join(sysconfig.get_config_var("datarootdir"),
-        "jupyter", "kernels", "pari_jupyter")
+kernelpath = os.path.join(ENV_JUPYTER_PATH[0], "kernels", "pari_jupyter")
 
 setup(
     name='pari_jupyter',
