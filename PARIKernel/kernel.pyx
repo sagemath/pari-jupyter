@@ -26,6 +26,7 @@ from libc.string cimport memset, strncmp
 from ipykernel.kernelbase import Kernel
 from libc.signal cimport SIGALRM, SIGINT
 from posix.signal cimport sigaction, sigaction_t
+import PARIKernel
 
 DEF PARISIZE = 2**27
 DEF PRIMELIMIT = 500000
@@ -97,7 +98,7 @@ cdef list hashtable_matches(word, size_t prefixlen, entree** hashtable):
 
 class PARIKernel(Kernel):
     implementation = 'PARI'
-    implementation_version = '0.0.0'
+    implementation_version = PARIKernel.version
     language = 'GP'
     language_version = pari_short_version()
     language_info = dict(mimetype='text/plain', name='GP', file_extension='gp')
