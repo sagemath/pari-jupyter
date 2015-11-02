@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+from glob import glob
 from distutils.core import setup
 from Cython.Build import cythonize
 from jupyter_core.paths import ENV_JUPYTER_PATH
@@ -18,5 +19,5 @@ setup(
     url="https://github.com/jdemeyer/pari_jupyter",
     packages=['PARIKernel'],
     ext_modules=cythonize("PARIKernel/*.pyx"),
-    data_files=[(kernelpath, ["spec/kernel.json"])],
+    data_files=[(kernelpath, glob("spec/*"))],
 )
