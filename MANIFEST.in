@@ -1,3 +1,3 @@
-include LICENSE README MANIFEST.in
+include LICENSE README.md MANIFEST.in
 recursive-include PARIKernel *.py *.pyx *.pxd
 recursive-exclude PARIKernel *.c

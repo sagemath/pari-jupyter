@@ -7,3 +7,6 @@ Dependencies:
 * Cython (git master)
 * PARI (git master)
 * GMP or MPIR (any version which works with PARI)
+
+This kernel can also be obtained as optional package for SageMath
+(run `sage -i pari_jupyter`).
