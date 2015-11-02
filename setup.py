@@ -11,7 +11,7 @@ kernelpath = os.path.join(ENV_JUPYTER_PATH[0], "kernels", "pari_jupyter")
 
 setup(
     name='pari_jupyter',
-    version=PARIKernel.version,
+    version=PARIKernel.__version__,
     description='A Jupyter kernel for PARI/GP',
     author='Jeroen Demeyer',
     author_email='jdemeyer@cage.ugent.be',

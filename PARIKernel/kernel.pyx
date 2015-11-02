@@ -98,7 +98,7 @@ cdef list hashtable_matches(word, size_t prefixlen, entree** hashtable):
 
 class PARIKernel(Kernel):
     implementation = 'PARI'
-    implementation_version = PARIKernel.version
+    implementation_version = PARIKernel.__version__
     language = 'GP'
     language_version = pari_short_version()
     language_info = dict(mimetype='text/plain', name='GP', file_extension='gp')
