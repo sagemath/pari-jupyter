@@ -1,3 +1,5 @@
+# distutils: libraries = readline
+
 #
 # Jupyter kernel for PARI/GP
 #
@@ -19,7 +21,6 @@
 
 
 from .paridecl cimport *
-from .paripriv cimport *
 from .io cimport PARIKernelIO
 from libc.setjmp cimport *
 from libc.string cimport memset, strncmp
@@ -27,6 +28,9 @@ from ipykernel.kernelbase import Kernel
 from libc.signal cimport SIGALRM, SIGINT
 from posix.signal cimport sigaction, sigaction_t
 import PARIKernel
+
+cdef extern from "readline/readline.h":
+    pass
 
 DEF PARISIZE = 2**27
 DEF PRIMELIMIT = 500000
@@ -38,6 +42,9 @@ cdef sigjmp_buf context
 cdef void pari_recover(long numerr) nogil:
     siglongjmp(context, -1)
 
+# Global PARI readline interface
+cdef pari_rl_interface pari_rl
+
 
 # Helper functions
 cdef inline PyString_FromGEN(GEN g):
@@ -48,7 +55,7 @@ cdef inline PyString_FromGEN(GEN g):
 
 
 def pari_short_version():
-    cdef unsigned long mask = (1<<PARI_VERSION_SHIFT) - 1;
+    cdef unsigned long mask = (1<<PARI_VERSION_SHIFT) - 1
     cdef unsigned long n = paricfg_version_code
 
     cdef unsigned long patch = n & mask
@@ -72,30 +79,6 @@ cdef inline bint is_keyword_char_python(s) except -1:
     return 32 <= c < 128 and is_keyword_char(c)
 
 
-cdef list hashtable_matches(word, size_t prefixlen, entree** hashtable):
-    """
-    Return a list of all words starting with ``word`` in
-    ``hashtable``. The first ``prefixlen`` characters of the returned
-    words are stripped away.
-    """
-    cdef char* cword = word
-    cdef size_t cwordlen = len(word)
-    assert cwordlen >= prefixlen
-
-    # Find word in PARI's hashtable
-    cdef entree* ep
-    cdef list matches = []
-    cdef long i
-    for i in range(functions_tblsz):
-        ep = hashtable[i]
-        while ep != NULL:
-            if strncmp(ep.name, cword, cwordlen) == 0:
-                matches.append(ep.name + prefixlen)
-            ep = ep.next
-
-    return matches
-
-
 class PARIKernel(Kernel):
     implementation = 'PARI'
     implementation_version = PARIKernel.__version__
@@ -108,17 +91,18 @@ class PARIKernel(Kernel):
         super(PARIKernel, self).__init__(*args, **kwds)
 
         pari_init_opts(PARISIZE, PRIMELIMIT, INIT_SIGm | INIT_DFTm)
-        global cb_pari_err_recover, pariOut, pariErr
+        global cb_pari_err_recover
         cb_pari_err_recover = pari_recover
         self.io = PARIKernelIO(self)
+        pari_use_readline(pari_rl)
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
         global avma
         cdef pari_sp av = avma
         cdef GEN result
-        cdef char* result_string
         cdef char* gp_code = code
+        cdef char last
 
         self.io.set_parent(self._parent_header)
 
@@ -128,70 +112,71 @@ class PARIKernel(Kernel):
         sa.sa_handler = pari_sighandler
 
         cdef int err
+        cdef long t_ms
         with nogil:
             err = sigsetjmp(context, 1)
             if err == 0:  # Initial sigsetjmp() call
                 sigaction(SIGINT, &sa, &old_sa)  # Handle SIGINT by PARI
-                result = gp_read_str_multiline(gp_code)
+                timer_start(GP_DATA.T)
+                result = gp_read_str_multiline(gp_code, &last)
+                t_ms = timer_delay(GP_DATA.T)
             sigaction(SIGINT, &old_sa, &sa)      # Restore Python SIGINT handler
 
         if not err:  # success
+            if not silent:
+                if t_ms and GP_DATA.chrono:
+                    pari_puts("time = ")
+                    pari_puts(gp_format_time(t_ms))
+                    pari_flush()
+
             # gnil as a result is like Python's None, it should be
             # considered as "no result"
-            if result != gnil and not silent:
-                content = {
-                        'execution_count': self.execution_count,
+            if result != gnil:
+                if store_history:
+                    pari_add_hist(result, t_ms)
+
+                if last != ';' and not silent:
+                    content = {
+                        'execution_count': pari_nb_hist(),
                         'data': {
                             'text/plain': PyString_FromGEN(result),
                         },
                         'metadata': {}
-                }
-                self.send_response(self.iopub_socket, 'execute_result', content)
+                    }
+                    self.send_response(self.iopub_socket, 'execute_result', content)
 
             reply = {'status': 'ok',
-                    # The base class increments the execution count
-                    'execution_count': self.execution_count,
-                    'payload': [],
-                    'user_expressions': {},
-                   }
+                     'execution_count': pari_nb_hist(),
+                     'payload': [],
+                     'user_expressions': {},
+                    }
         else:  # error (therefore no result)
             reply = {'status': 'error',
-                    # The base class increments the execution count
-                    'execution_count': self.execution_count,
-                    'ename': "",
-                    'evalue': "",
-                    'traceback': [],
-                   }
+                     'execution_count': pari_nb_hist(),
+                     'ename': "",
+                     'evalue': "",
+                     'traceback': [],
+                    }
 
         avma = av
         self.io.flush()
         return reply
 
     def do_complete(self, code, cursor_pos):
-        left = code[:cursor_pos]
-        word, start, end = self.__get_keyword(left, cursor_pos)
+        cdef long word
+        cdef char** m = pari_completion_matches(&pari_rl, code, cursor_pos, &word)
 
-        # If the word comes after a period, complete members
-        cdef size_t prefixlen = 0
-        if start >= 1 and code[start-1] == '.':
-            word = "_." + word
-            prefixlen = 2
-
-        # Filter matches: first character should not be _
-        # and all characters should be keyword characters
         cdef list matches = []
-        cdef Py_ssize_t i
-        for m in hashtable_matches(word, prefixlen, functions_hash):
-            if m[0] == '_':    # Skip private functions
-                continue
-            for i in range(len(m)):
-                if not is_keyword_char_python(m[i]):
-                    break
-            else:
-                matches.append(m)
+        if m != NULL:
+            if m[1] == NULL:  # Unique match
+                matches = [m[0]]
+            else:             # Non-unique match
+                while m[1] != NULL:
+                    matches.append(m[1])
+                    m += 1
 
         reply = dict(status="ok", matches=sorted(matches),
-                cursor_start=start, cursor_end=end)
+                cursor_start=word, cursor_end=cursor_pos)
         return reply
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
