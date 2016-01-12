@@ -4,10 +4,9 @@ import os
 from glob import glob
 from distutils.core import setup
 from Cython.Build import cythonize
-from jupyter_core.paths import ENV_JUPYTER_PATH
 import PARIKernel
 
-kernelpath = os.path.join(ENV_JUPYTER_PATH[0], "kernels", "pari_jupyter")
+kernelpath = os.path.join("share", "jupyter", "kernels", "pari_jupyter")
 
 setup(
     name='pari_jupyter',
