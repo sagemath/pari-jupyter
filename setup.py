@@ -19,8 +19,8 @@ except Exception:
 
 ext = ".pyx" if USE_CYTHON else ".c"
 
-extensions = [Extension("PARIKernel.kernel", ["PARIKernel/kernel"+ext]),
-              Extension("PARIKernel.io", ["PARIKernel/io"+ext])]
+extensions = [Extension("PARIKernel.kernel", ["PARIKernel/kernel"+ext], libraries=["pari", "readline"]),
+              Extension("PARIKernel.io", ["PARIKernel/io"+ext], libraries=["pari"])]
 
 if USE_CYTHON:
     from Cython.Build import cythonize
