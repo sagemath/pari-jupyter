@@ -26,7 +26,7 @@ extensions = [Extension("PARIKernel.kernel", ["PARIKernel/kernel"+ext], librarie
 # Are SVG graphics available?
 from subprocess import Popen, PIPE
 gp = Popen("gp -f -q", shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-gp.communicate('''install(PARI_get_plot_svg, "v")''')
+gp.communicate('''ok=1; iferr(install("PARI_get_plot_svg", "v"), E, ok=0); quit(!ok);''')
 HAVE_SVG = (gp.wait() == 0)
 
 if HAVE_SVG:
