@@ -46,6 +46,10 @@ cdef extern from "pari/pari.h" nogil:
 
     entree* is_entry(char *s)
 
+    void    PARI_get_plot_svg()
+    void    (*cb_plot_svg)(const char*)
+
+
 cdef extern from "pari/paripriv.h" nogil:
     long    is_keyword_char(char c)
 

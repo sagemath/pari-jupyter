@@ -22,6 +22,18 @@ else:
 extensions = [Extension("PARIKernel.kernel", ["PARIKernel/kernel"+ext], libraries=["pari", "readline"]),
               Extension("PARIKernel.io", ["PARIKernel/io"+ext], libraries=["pari"])]
 
+
+# Are SVG graphics available?
+from subprocess import Popen, PIPE
+gp = Popen("gp -f -q", shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+gp.communicate('''install(PARI_get_plot_svg, "v")''')
+HAVE_SVG = (gp.wait() == 0)
+
+if HAVE_SVG:
+    ext = Extension("PARIKernel.svg", ["PARIKernel/svg"+ext], libraries=["pari"])
+    extensions.append(ext)
+
+
 setup(
     name='pari_jupyter',
     version=PARIKernel.__version__,

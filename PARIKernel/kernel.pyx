@@ -43,6 +43,13 @@ cdef void pari_recover(long numerr) nogil:
 # Global PARI readline interface
 cdef pari_rl_interface pari_rl
 
+# Support for SVG plotting (if compiled in)
+try:
+    from .svg import init_svg
+except ImportError:
+    def init_svg(self):
+        pass
+
 
 # Helper functions
 cdef inline PyString_FromGEN(GEN g):
@@ -93,6 +100,7 @@ class PARIKernel(Kernel):
         cb_pari_err_recover = pari_recover
         self.io = PARIKernelIO(self)
         pari_use_readline(pari_rl)
+        init_svg(self)
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
@@ -194,6 +202,19 @@ class PARIKernel(Kernel):
         reply["found"] = True
         reply["data"] = {"text/plain": ep.help}
         return reply
+
+    def publish_svg(self, svg, width, height):
+        content = {
+            'data': {
+                "text/plain": "SVG plot",
+                "image/svg+xml": svg,
+            },
+            'metadata': {
+                "width": width,
+                "height": height,
+            }
+        }
+        self.send_response(self.iopub_socket, 'display_data', content)
 
     def __get_keyword(self, code, pos):
         """
