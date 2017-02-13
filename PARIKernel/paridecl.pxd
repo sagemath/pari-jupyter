@@ -64,3 +64,5 @@ cdef extern from "pari/paripriv.h" nogil:
 
     void    pari_use_readline(pari_rl_interface)
     char**  pari_completion_matches(pari_rl_interface*, char* s, long pos, long* wordpos)
+
+    void    init_graph()

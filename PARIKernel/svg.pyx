@@ -32,5 +32,6 @@ def init_svg(kernel):
     global cb_plot_svg
     pari_kernel = kernel
 
+    init_graph()
     PARI_get_plot_svg()
     cb_plot_svg = svg_callback
