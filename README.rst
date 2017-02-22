@@ -4,6 +4,13 @@ pari_jupyter
 A `Jupyter <http://jupyter.org/>`_ kernel for
 `PARI/GP <http://pari.math.u-bordeaux.fr/>`_.
 
+Installation
+------------
+
+Install the dependencies listed below and run::
+
+    pip install pari_jupyter
+
 Dependencies
 ------------
 
