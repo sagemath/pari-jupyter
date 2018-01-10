@@ -93,7 +93,7 @@ class PARIKernel(Kernel):
     banner = "PARI/GP kernel"
 
     def __init__(self, *args, **kwds):
-        super(PARIKernel, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
 
         pari_init_opts(PARISIZE, PRIMELIMIT, INIT_SIGm | INIT_DFTm)
         global cb_pari_err_recover

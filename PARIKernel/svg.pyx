@@ -22,16 +22,29 @@ from .paridecl cimport *
 
 cdef pari_kernel
 
-cdef void svg_callback(const char* svg) nogil:
-    with gil:
-        pari_kernel.publish_svg(svg, 480, 320)
-
 
 def init_svg(kernel):
     global pari_kernel
-    global cb_plot_svg
     pari_kernel = kernel
+    pari_set_plot_engine(get_plot)
 
-    init_graph()
-    PARI_get_plot_svg()
-    cb_plot_svg = svg_callback
+
+cdef void get_plot(PARI_plot* T) nogil:
+    # Values copied from src/graph/plotsvg.c in PARI sources
+    T.width = 480
+    T.height = 320
+    T.hunit = 3
+    T.vunit = 3
+    T.fwidth = 9
+    T.fheight = 12
+
+    T.draw = draw
+
+
+cdef void draw(PARI_plot *T, GEN w, GEN x, GEN y) nogil:
+    global avma
+    cdef pari_sp av = avma
+    cdef char* svg = rect2svg(w, x, y, T)
+    with gil:
+        pari_kernel.publish_svg(svg, T.width, T.height)
+    avma = av

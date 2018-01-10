@@ -46,8 +46,18 @@ cdef extern from "pari/pari.h" nogil:
 
     entree* is_entry(char *s)
 
-    void    PARI_get_plot_svg()
-    void    (*cb_plot_svg)(const char*)
+    ctypedef struct PARI_plot:
+        long width
+        long height
+        long hunit
+        long vunit
+        long fwidth
+        long fheight
+        void (*draw)(PARI_plot *T, GEN w, GEN x, GEN y)
+
+    void pari_set_plot_engine(void (*T)(PARI_plot *))
+
+    char* rect2svg(GEN w, GEN x, GEN y, PARI_plot *T)
 
 
 cdef extern from "pari/paripriv.h" nogil:

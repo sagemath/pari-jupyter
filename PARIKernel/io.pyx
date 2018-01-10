@@ -57,7 +57,7 @@ cdef class PARIKernelIO(object):
     def __init__(self, kernel):
         global io
         if io is not None:
-            raise RuntimeError("Cannot create more than one PARIKernelIO object")
+            raise RuntimeError("cannot create more than one PARIKernelIO object")
         io = self
 
         global pariOut, pariErr
