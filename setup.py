@@ -41,7 +41,7 @@ setup(
     long_description=open("README.rst").read(),
     platforms=["POSIX"],
     author='Jeroen Demeyer',
-    author_email='jdemeyer@cage.ugent.be',
+    author_email='J.Demeyer@UGent.be',
     license='GNU General Public License (GPL) version 3 or later',
     url="https://github.com/jdemeyer/pari_jupyter",
     classifiers=["Development Status :: 5 - Production/Stable",
