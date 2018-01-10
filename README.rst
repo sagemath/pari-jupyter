@@ -14,7 +14,7 @@ Install the dependencies listed below and run::
 Dependencies
 ------------
 
-* `Python <https://www.python.org/>`_ (tested with version 2.7.12)
+* `Python <https://www.python.org/>`_ (tested with version 2.7.14 and 3.6.1)
 * `Jupyter <http://jupyter.org/>`_ 4
 * `PARI <http://pari.math.u-bordeaux.fr/>`_ version 2.8.0 or later
 * `Readline <http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html>`_ (any version which works with PARI)
