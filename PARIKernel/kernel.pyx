@@ -107,6 +107,8 @@ class PARIKernel(Kernel):
         global avma
         cdef pari_sp av = avma
         cdef GEN result
+        if isinstance(code, unicode):
+            code = (<unicode>code).encode()
         cdef char* gp_code = code
         cdef char last
 
@@ -137,7 +139,7 @@ class PARIKernel(Kernel):
 
             # gnil as a result is like Python's None, it should be
             # considered as "no result"
-            if result != gnil:
+            if result is not gnil:
                 if store_history:
                     pari_add_hist(result, t_ms)
 
@@ -204,6 +206,9 @@ class PARIKernel(Kernel):
         return reply
 
     def publish_svg(self, svg, width, height):
+        # For some reason, the payload must be str, not bytes
+        if not isinstance(svg, str):
+            svg = svg.decode()
         content = {
             'data': {
                 "text/plain": "SVG plot",
