@@ -20,14 +20,14 @@
 
 from .paridecl cimport pariOut, pariErr
 from ipykernel.iostream import OutStream
-from cpython.string cimport PyString_FromStringAndSize
+from cpython.bytes cimport PyBytes_FromStringAndSize
 
 # Unique PARIKernelIO object
 cdef PARIKernelIO io
 
 
 cdef void out_putch(char c) with gil:
-    io.stdout_stream.write(PyString_FromStringAndSize(&c, 1))
+    io.stdout_stream.write(PyBytes_FromStringAndSize(&c, 1))
 
 cdef void out_puts(const char* s) with gil:
     io.stdout_stream.write(s)
@@ -36,7 +36,7 @@ cdef void out_flush() with gil:
     io.stdout_stream.flush()
 
 cdef void err_putch(char c) with gil:
-    io.stderr_stream.write(PyString_FromStringAndSize(&c, 1))
+    io.stderr_stream.write(PyBytes_FromStringAndSize(&c, 1))
 
 cdef void err_puts(const char* s) with gil:
     io.stderr_stream.write(s)
