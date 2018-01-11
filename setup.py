@@ -51,6 +51,7 @@ setup(
                  "Intended Audience :: Science/Research",
                  "Topic :: Scientific/Engineering :: Mathematics",
                 ],
+    install_requires=['ipykernel'],
 
     packages=['PARIKernel'],
     ext_modules=extensions,
