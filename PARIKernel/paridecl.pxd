@@ -7,7 +7,7 @@ cdef extern from "pari/pari.h" nogil:
     ctypedef struct entree:
         entree* next
         char* name
-        char* help
+        const char* help
 
     long    paricfg_version_code
     long    PARI_VERSION_SHIFT
@@ -24,7 +24,7 @@ cdef extern from "pari/pari.h" nogil:
 
     void    pari_free(void*)
 
-    GEN     gp_read_str_multiline(char *t, char *last)
+    GEN     gp_read_str_multiline(const char *t, char *last)
     char*   GENtostr(GEN x)
     void    pari_add_hist(GEN z, long t)
     long    pari_nb_hist()

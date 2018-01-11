@@ -52,9 +52,13 @@ except ImportError:
 
 
 # Helper functions
-cdef inline PyString_FromGEN(GEN g):
+cdef extern from "Python.h":
+    unicode PyUnicode_FromString(const char*)
+
+
+cdef inline PyUnicode_FromGEN(GEN g):
     cdef char* s = GENtostr(g)
-    cdef object pystr = s
+    cdef object pystr = PyUnicode_FromString(s)
     pari_free(s)
     return pystr
 
@@ -107,10 +111,9 @@ class PARIKernel(Kernel):
         global avma
         cdef pari_sp av = avma
         cdef GEN result
-        if isinstance(code, unicode):
-            code = (<unicode>code).encode()
-        cdef char* gp_code = code
-        cdef char last
+
+        code = (<unicode?>code).encode("utf-8")
+        cdef const char* gp_code = <bytes>code
 
         self.io.set_parent(self._parent_header)
 
@@ -121,6 +124,7 @@ class PARIKernel(Kernel):
 
         cdef int err
         cdef long t_ms
+        cdef char last
         with nogil:
             err = sigsetjmp(context, 1)
             if err == 0:  # Initial sigsetjmp() call
@@ -133,7 +137,7 @@ class PARIKernel(Kernel):
         if not err:  # success
             if not silent:
                 if t_ms and GP_DATA.chrono:
-                    pari_puts("time = ")
+                    pari_puts(b"time = ")
                     pari_puts(gp_format_time(t_ms))
                     pari_flush()
 
@@ -147,7 +151,7 @@ class PARIKernel(Kernel):
                     content = {
                         'execution_count': pari_nb_hist(),
                         'data': {
-                            'text/plain': PyString_FromGEN(result),
+                            'text/plain': PyUnicode_FromGEN(result),
                         },
                         'metadata': {}
                     }
@@ -172,15 +176,16 @@ class PARIKernel(Kernel):
 
     def do_complete(self, code, cursor_pos):
         cdef long word
-        cdef char** m = pari_completion_matches(&pari_rl, code, cursor_pos, &word)
+        cdef char** m = pari_completion_matches(&pari_rl,
+                (<unicode?>code).encode("utf-8"), cursor_pos, &word)
 
         cdef list matches = []
         if m != NULL:
             if m[1] == NULL:  # Unique match
-                matches = [m[0]]
+                matches = [PyUnicode_FromString(m[0])]
             else:             # Non-unique match
                 while m[1] != NULL:
-                    matches.append(m[1])
+                    matches.append(PyUnicode_FromString(m[1]))
                     m += 1
 
         reply = dict(status="ok", matches=sorted(matches),
@@ -190,25 +195,25 @@ class PARIKernel(Kernel):
     def do_inspect(self, code, cursor_pos, detail_level=0):
         word = self.__get_keyword(code, cursor_pos)[0]
         # Possibly rewind if we are right after a "("
-        if not word and cursor_pos > 0 and code[cursor_pos-1] == "(":
+        if not word and cursor_pos > 0 and code[cursor_pos-1] == u"(":
             word = self.__get_keyword(code, cursor_pos-1)[0]
 
         reply = dict(status="ok", found=False, data={}, metadata={})
         if not word:
             return reply
 
-        cdef entree* ep = is_entry(word)
+        cdef entree* ep = is_entry((<unicode?>word).encode("utf-8"))
         if ep == NULL or ep.help == NULL:
             return reply
 
         reply["found"] = True
-        reply["data"] = {"text/plain": ep.help}
+        reply["data"] = {"text/plain": PyUnicode_FromString(ep.help)}
         return reply
 
     def publish_svg(self, svg, width, height):
         # For some reason, the payload must be str, not bytes
         if not isinstance(svg, str):
-            svg = svg.decode()
+            svg = PyUnicode_FromString(svg)
         content = {
             'data': {
                 "text/plain": "SVG plot",
