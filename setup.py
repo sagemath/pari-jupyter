@@ -2,9 +2,9 @@
 
 import os
 from glob import glob
-from distutils.core import setup, Extension
-from distutils.version import StrictVersion
+from setuptools import setup, Extension
 from setuptools.command.install import install as _install
+from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
 import PARIKernel
 
 kernelpath = os.path.join("share", "jupyter", "kernels", "pari_jupyter")
@@ -41,7 +41,14 @@ class install(_install):
         _install.run(self)
         enable_nbextension('notebook', 'gp-mode/main')
 
-cmdclass['install']=install
+class no_egg(_bdist_egg):
+    def run(self):
+        from distutils.errors import DistutilsOptionError
+        raise DistutilsOptionError("The package pari_jupyter will not function correctly when built as egg. Therefore, it cannot be installed using 'python setup.py install' or 'easy_install'. Instead, use 'pip install' to install this package.")
+
+cmdclass['install'] = install
+cmdclass['bdist_egg'] = no_egg
+
 
 setup(
     name='pari_jupyter',
