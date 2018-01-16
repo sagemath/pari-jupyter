@@ -37,9 +37,8 @@ if HAVE_SVG:
 
 class install(_install):
     def run(self):
-        from notebook.nbextensions import enable_nbextension, install_nbextension
+        from notebook.nbextensions import enable_nbextension
         _install.run(self)
-        install_nbextension('gp-mode', overwrite=True, user=self.user)
         enable_nbextension('notebook', 'gp-mode/main')
 
 cmdclass['install']=install
