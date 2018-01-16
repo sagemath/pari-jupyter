@@ -4,9 +4,11 @@ import os
 from glob import glob
 from distutils.core import setup, Extension
 from distutils.version import StrictVersion
+from setuptools.command.install import install as _install
 import PARIKernel
 
 kernelpath = os.path.join("share", "jupyter", "kernels", "pari_jupyter")
+nbextpath = os.path.join("share", "jupyter", "nbextensions", "gp-mode")
 
 try:
     from Cython.Build import build_ext
@@ -33,6 +35,13 @@ if HAVE_SVG:
     ext = Extension("PARIKernel.svg", ["PARIKernel/svg"+ext], libraries=["pari"])
     extensions.append(ext)
 
+class install(_install):
+    def run(self):
+        from notebook.nbextensions import enable_nbextension
+        _install.run(self)
+        enable_nbextension('notebook', 'gp-mode/main')
+
+cmdclass['install']=install
 
 setup(
     name='pari_jupyter',
@@ -55,6 +64,6 @@ setup(
 
     packages=['PARIKernel'],
     ext_modules=extensions,
-    data_files=[(kernelpath, glob("spec/*"))],
+    data_files=[(kernelpath, glob("spec/*")), (nbextpath, glob("gp-mode/*"))],
     cmdclass=cmdclass,
 )
