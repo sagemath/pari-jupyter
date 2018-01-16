@@ -37,9 +37,11 @@ if HAVE_SVG:
 
 class install(_install):
     def run(self):
-        from notebook.nbextensions import enable_nbextension
         _install.run(self)
-        enable_nbextension('notebook', 'gp-mode/main')
+        # Unsafe since this always enables the extension in the user
+        # configuration, even for a system install.
+        #from notebook.nbextensions import enable_nbextension
+        #enable_nbextension('notebook', 'gp-mode/main')
 
 class no_egg(_bdist_egg):
     def run(self):
