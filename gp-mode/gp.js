@@ -8,22 +8,18 @@ define([
     return new RegExp(words.join('(?!\\\\[(),.]?|[\\w@]+)|') + '(?!\\\\[(),.]?|[\\w@]+)', 'm');
   }
 
-    var builtin = createBuiltinRegularExpression(['Catalan', 'Col', 'Colrev', 'Euler', 'I', 'List',
-        'Map', 'Mat', 'Mod', 'O', 'Pi', 'Pol', 'Polrev', 'Qfb', 'Ser', 'Set',
-        'Str', 'Strchr', 'Strexpand', 'Strprintf', 'Strtex', 'Vec', 'Vecrev', 'Vecsmall',
-        '_.a1', '_.a2', '_.a3', '_.a4', '_.a6', '_.area', '_.b2', '_.b4', '_.b6', '_.b8', '_.bid', '_.bnf',
-        '_.c4', '_.c6', '_.clgp', '_.codiff', '_.cyc', '_.diff', '_.disc', '_.e', '_.eta',
-        '_.f', '_.fu', '_.futu', '_.gen', '_.group', '_.index', '_.j', '_.mod', '_.nf',
-        '_.no', '_.omega', '_.orders', '_.p', '_.pol', '_.polabs', '_.r1', '_.r2', '_.reg',
-        '_.roots', '_.sign', '_.t2', '_.tate', '_.tu', '_.tufu', '_.zk', '_.zkst',
-        '_ZX_resultant_worker', '_derivfun', '_eval_mnemonic', '_factor_Aurifeuille',
-        '_factor_Aurifeuille_prime', '_multi_if', '_parapply_worker', '_pareval_worker',
-        '_parfor_worker', '_parvector_worker', '_polint_worker', '_polmodular_worker', '_void_if',
-        'abs', 'acos', 'acosh', 'addhelp', 'addprimes', 'agm', 'alarm', 'algabsdim',
-        'algadd', 'algalgtobasis', 'algaut', 'algb', 'algbasis', 'algbasistoalg', 'algcenter',
-        'algcentralproj', 'algchar', 'algcharpoly', 'algdecomposition', 'algdegree', 'algdep',
-        'algdim', 'algdisc', 'algdivl', 'algdivr', 'alggroup', 'alghasse', 'alghassef',
-        'alghassei', 'algindex', 'alginit', 'alginv', 'alginvbasis', 'algisassociative',
+    /*
+        To update var builtin, use the script tools/generatekwlist.py the list
+        is generated in the file tools/builtinlist.txt
+    */
+    var builtin = createBuiltinRegularExpression([
+        'Catalan', 'Col', 'Colrev', 'Euler', 'I', 'List', 'Map', 'Mat', 'Mod', 'O', 'Pi',
+        'Pol', 'Polrev', 'Qfb', 'Ser', 'Set', 'Str', 'Strchr', 'Strexpand', 'Strprintf',
+        'Strtex', 'Vec', 'Vecrev', 'Vecsmall', 'abs', 'acos', 'acosh', 'addhelp', 'addprimes',
+        'agm', 'alarm', 'algabsdim', 'algadd', 'algalgtobasis', 'algaut', 'algb', 'algbasis',
+        'algbasistoalg', 'algcenter', 'algcentralproj', 'algchar', 'algcharpoly', 'algdecomposition',
+        'algdegree', 'algdep', 'algdim', 'algdisc', 'algdivl', 'algdivr', 'alggroup', 'alghasse',
+        'alghassef', 'alghassei', 'algindex', 'alginit', 'alginv', 'alginvbasis', 'algisassociative',
         'algiscommutative', 'algisdivision', 'algisdivl', 'algisinv', 'algisramified', 'algissemisimple',
         'algissimple', 'algissplit', 'alglathnf', 'algleftmultable', 'algmul', 'algmultable',
         'algneg', 'algnorm', 'algpoleval', 'algpow', 'algprimesubalg', 'algquotient', 'algradical',
