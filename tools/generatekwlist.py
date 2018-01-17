@@ -42,7 +42,7 @@ for func in f_list:
         if len(t) < linemaxchar:
             line = t
             continue
-        print(line)
+        print(line + ",")
 
     line = "    '{0}'".format(func)
 
