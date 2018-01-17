@@ -7,9 +7,19 @@ A `Jupyter <http://jupyter.org/>`_ kernel for
 Installation
 ------------
 
-Install the dependencies listed below and run::
+Install the dependencies listed below and run ::
 
     pip install pari_jupyter
+
+Syntax highlighting
+-------------------
+
+To enable syntax highlighting, you need to enable the notebook extension
+by running ::
+
+    jupyter nbextension enable --sys-prefix gp-mode/main
+
+Replace ``--sys-prefix`` by ``--user`` for a user installation.
 
 Dependencies
 ------------
