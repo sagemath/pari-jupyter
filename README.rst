@@ -14,8 +14,8 @@ Install the dependencies listed below and run ::
 Syntax highlighting
 -------------------
 
-To enable syntax highlighting, you need to enable the notebook extension
-by running ::
+On Jupyter notebook versions older than 5.3, syntax highlighting must be
+explicitly enabled by running ::
 
     jupyter nbextension enable --sys-prefix gp-mode/main
 
