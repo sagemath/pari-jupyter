@@ -2,11 +2,14 @@ cdef extern from "pari/pari.h" nogil:
     ctypedef unsigned long ulong "pari_ulong"
     ctypedef long* GEN
     ctypedef unsigned long pari_sp
-    ctypedef long pari_timer
+
+    ctypedef struct pari_timer:
+        long s
+        long us
 
     ctypedef struct entree:
         entree* next
-        char* name
+        const char* name
         const char* help
 
     long    paricfg_version_code
@@ -15,7 +18,7 @@ cdef extern from "pari/pari.h" nogil:
     pari_sp avma
     GEN     gnil
 
-    int     INIT_JMPm, INIT_SIGm, INIT_DFTm, INIT_noPRIMEm, INIT_noIMTm
+    int     INIT_JMPm, INIT_SIGm, INIT_DFTm, INIT_noPRIMEm, INIT_noIMTm, INIT_noINTGMPm
     void    pari_init_opts(size_t parisize, ulong maxprime, ulong init_opts)
     void    pari_init(size_t parisize, ulong maxprime)
     void    pari_sighandler(int sig)
@@ -26,8 +29,8 @@ cdef extern from "pari/pari.h" nogil:
 
     GEN     gp_read_str_multiline(const char *t, char *last)
     char*   GENtostr(GEN x)
-    void    pari_add_hist(GEN z, long t)
-    long    pari_nb_hist()
+    void    pari_add_hist(GEN z, long t, long r)
+    ulong   pari_nb_hist()
 
     long    timer_delay(pari_timer *T)
     long    timer_get(pari_timer *T)
@@ -74,5 +77,3 @@ cdef extern from "pari/paripriv.h" nogil:
 
     void    pari_use_readline(pari_rl_interface)
     char**  pari_completion_matches(pari_rl_interface*, char* s, long pos, long* wordpos)
-
-    void    init_graph()

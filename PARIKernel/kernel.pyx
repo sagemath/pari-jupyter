@@ -145,7 +145,7 @@ class PARIKernel(Kernel):
             # considered as "no result"
             if result is not gnil:
                 if store_history:
-                    pari_add_hist(result, t_ms)
+                    pari_add_hist(result, t_ms, t_ms)
 
                 if last != ';' and not silent:
                     content = {
