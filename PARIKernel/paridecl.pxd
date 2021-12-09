@@ -26,7 +26,7 @@ cdef extern from "pari/pari.h" nogil:
 
     GEN     gp_read_str_multiline(const char *t, char *last)
     char*   GENtostr(GEN x)
-    void    pari_add_hist(GEN z, long t)
+    void    pari_add_hist(GEN z, long t, long r)
     long    pari_nb_hist()
 
     long    timer_delay(pari_timer *T)
