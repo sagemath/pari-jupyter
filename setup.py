@@ -49,6 +49,7 @@ setup(
     version=PARIKernel.__version__,
     description='A Jupyter kernel for PARI/GP',
     long_description=open("README.rst").read(),
+    long_description_content_type='text/x-rst',
     platforms=["POSIX"],
     author='Jeroen Demeyer',
     author_email='pari-users@pari.math.u-bordeaux.fr',
