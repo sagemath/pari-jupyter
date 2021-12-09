@@ -1,4 +1,4 @@
-pari_jupyter
+pari-jupyter
 ============
 
 A `Jupyter <http://jupyter.org/>`_ kernel for
@@ -9,7 +9,7 @@ Installation
 
 Install the dependencies listed below and run ::
 
-    pip install pari_jupyter
+    pip install pari-jupyter
 
 Syntax highlighting
 -------------------
@@ -29,6 +29,3 @@ Dependencies
 * `PARI <http://pari.math.u-bordeaux.fr/>`_ version 2.8.0 or later
 * `Readline <http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html>`_ (any version which works with PARI)
 * Optional: `Cython <http://cython.org/>`_ version 0.25 or later
-
-This kernel can also be obtained as optional package for SageMath
-(run ``sage -i pari_jupyter``).
