@@ -54,7 +54,7 @@ setup(
     author='Jeroen Demeyer',
     author_email='pari-users@pari.math.u-bordeaux.fr',
     license='GNU General Public License (GPL) version 3 or later',
-    url="https://github.com/videlec/pari-jupyter",
+    url="https://github.com/sagemath/pari-jupyter",
     classifiers=["Development Status :: 5 - Production/Stable",
                  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
                  "Operating System :: POSIX",
