@@ -39,21 +39,22 @@ if HAVE_SVG:
 class no_egg(_bdist_egg):
     def run(self):
         from distutils.errors import DistutilsOptionError
-        raise DistutilsOptionError("The package pari_jupyter will not function correctly when built as egg. Therefore, it cannot be installed using 'python setup.py install' or 'easy_install'. Instead, use 'pip install' to install this package.")
+        raise DistutilsOptionError("The package pari-jupyter will not function correctly when built as egg. Therefore, it cannot be installed using 'python setup.py install' or 'easy_install'. Instead, use 'pip install' to install this package.")
 
 cmdclass['bdist_egg'] = no_egg
 
 
 setup(
-    name='pari_jupyter',
+    name='pari-jupyter',
     version=PARIKernel.__version__,
     description='A Jupyter kernel for PARI/GP',
     long_description=open("README.rst").read(),
+    long_description_content_type='text/x-rst',
     platforms=["POSIX"],
     author='Jeroen Demeyer',
-    author_email='J.Demeyer@UGent.be',
+    author_email='pari-users@pari.math.u-bordeaux.fr',
     license='GNU General Public License (GPL) version 3 or later',
-    url="https://github.com/jdemeyer/pari_jupyter",
+    url="https://github.com/sagemath/pari-jupyter",
     classifiers=["Development Status :: 5 - Production/Stable",
                  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
                  "Operating System :: POSIX",

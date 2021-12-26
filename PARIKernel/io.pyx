@@ -65,9 +65,9 @@ cdef class PARIKernelIO(object):
         pariErr = &self.pari_err
 
         self.stdout_stream = OutStream(kernel.session,
-                kernel.iopub_socket, "stdout", pipe=False)
+                kernel.iopub_socket, "stdout")
         self.stderr_stream = OutStream(kernel.session,
-                kernel.iopub_socket, "stderr", pipe=False)
+                kernel.iopub_socket, "stderr")
 
     def set_parent(self, parent):
         self.stdout_stream.set_parent(parent)
