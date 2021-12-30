@@ -29,3 +29,11 @@ Dependencies
 * `PARI <http://pari.math.u-bordeaux.fr/>`_ version 2.13 or later
 * `Readline <http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html>`_ (any version which works with PARI)
 * Optional: `Cython <http://cython.org/>`_ version 0.25 or later
+
+Running tests
+-------------
+
+There is a standalone python script in test/ that depends on `jupyter_kernel_test
+<https://github.com/jupyter/jupyter_kernel_test>`_ (see the file
+test/environment.yml for the precise dependency list that are run in the github
+action using conda).
