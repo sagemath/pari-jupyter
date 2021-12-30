@@ -1,0 +1,26 @@
+name: Test
+on:
+  push: { branches: [ "master" ] }
+  pull_request: { branches: [ "master" ] }
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with: { submodules: recursive }
+      - uses: conda-incubator/setup-miniconda@v2
+        with: { mamba-version: "*", channels: "conda-forge", channel-priority: true }
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          mamba env create -f test/environment.yml
+          conda list
+      - name: Install pari-jupyter
+        shell: bash -l {0}
+        run: pip install --verbose --no-index .
+      - name: Run test
+        shell: bash -l {0}
+        run: |
+          cd test
+          python test_pari_jupyter_kernel.py
