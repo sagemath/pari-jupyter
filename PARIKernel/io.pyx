@@ -1,3 +1,4 @@
+#cython: language_level=3
 #
 # Helper class to manage I/O between PARI and the Jupyter client
 #

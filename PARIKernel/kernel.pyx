@@ -1,3 +1,4 @@
+#cython: language_level=3
 #
 # Jupyter kernel for PARI/GP
 #
@@ -147,7 +148,7 @@ class PARIKernel(Kernel):
                 if store_history:
                     pari_add_hist(result, t_ms, t_ms)
 
-                if last != ';' and not silent:
+                if last != c';' and not silent:
                     content = {
                         'execution_count': pari_nb_hist(),
                         'data': {
