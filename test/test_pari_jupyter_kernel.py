@@ -24,7 +24,7 @@ class PARIKernelTests(jkt.KernelTests):
 
     # the normal file extension (including the leading dot) for this language
     # checked against language_info.file_extension in kernel_info_reply
-    # file_extension = ".gp"
+    file_extension = ".gp"
 
     # code which should write the exact string `hello, world` to STDOUT
     code_hello_world = "print(\"hello, world\")"
