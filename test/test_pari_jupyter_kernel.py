@@ -24,7 +24,7 @@ class PARIKernelTests(jkt.KernelTests):
 
     # the normal file extension (including the leading dot) for this language
     # checked against language_info.file_extension in kernel_info_reply
-    # file_extension = ".gp"
+    file_extension = ".gp"
 
     # code which should write the exact string `hello, world` to STDOUT
     code_hello_world = "print(\"hello, world\")"
@@ -50,7 +50,7 @@ class PARIKernelTests(jkt.KernelTests):
     # code which should cause a help pager to be displayed (as of 4.1, this is
     # displayed by the notebook only as inline text, so it's probably more
     # useful for console clients)
-    code_page_something = "?cos"
+    # code_page_something = "?cos"
 
     # code which should generate a (user-level) error in the kernel, and send
     # a traceback to the client

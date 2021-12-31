@@ -12,5 +12,6 @@ dependencies:
   - jupyter
   - pip
   - ipykernel
+  - pari
   - pip:
     - jupyter_kernel_test # NOTE: not recent enough in conda, see https://github.com/jupyter/jupyter_kernel_test/issues/70

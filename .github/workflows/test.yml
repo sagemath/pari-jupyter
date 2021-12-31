@@ -15,13 +15,17 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-        with: { submodules: recursive }
       - uses: conda-incubator/setup-miniconda@v2
-        with: { mamba-version: "*", channels: "conda-forge", channel-priority: true }
-      - name: Install dependencies
+        with:
+          mamba-version: "*"
+          activate-environment: pari-jupyter-test
+          environment-file: test/environment.yml
+          python-version: 3.9
+          auto-activate-base: false
+      - name: Conda list
         shell: bash -l {0}
         run: |
-          mamba env create -f test/environment.yml
+          conda info
           conda list
       - name: Install pari-jupyter
         shell: bash -l {0}
