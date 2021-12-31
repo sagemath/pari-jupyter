@@ -50,7 +50,7 @@ class PARIKernelTests(jkt.KernelTests):
     # code which should cause a help pager to be displayed (as of 4.1, this is
     # displayed by the notebook only as inline text, so it's probably more
     # useful for console clients)
-    code_page_something = "?cos"
+    # code_page_something = "?cos"
 
     # code which should generate a (user-level) error in the kernel, and send
     # a traceback to the client
