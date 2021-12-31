@@ -1,0 +1,16 @@
+# This file lists the minimial dependencies needed to build and test
+# pari-jupyter. Create a conda environment with these dependencies
+# preinstalled with:
+# conda env create -f environment.yml
+name: pari-jupyter-test
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9 # NOTE: does not work with 3.10, see https://github.com/jupyter/jupyter_console/issues/245
+  - cython
+  - jupyter
+  - pip
+  - ipykernel
+  - pip:
+    - jupyter_kernel_test # NOTE: not recent enough in conda, see https://github.com/jupyter/jupyter_kernel_test/issues/70
