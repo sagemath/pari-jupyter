@@ -105,6 +105,7 @@ class PARIKernel(Kernel):
         cb_pari_err_recover = pari_recover
         self.io = PARIKernelIO(self)
         pari_use_readline(pari_rl)
+        gp_load_gprc()
         init_svg(self)
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
