@@ -12,7 +12,11 @@ cdef extern from "pari/pari.h" nogil:
     long    paricfg_version_code
     long    PARI_VERSION_SHIFT
 
+    ctypedef struct pari_mainstack:
+        pari_sp top
+
     pari_sp avma
+    pari_mainstack * pari_mainstack
     GEN     gnil
 
     int     INIT_JMPm, INIT_SIGm, INIT_DFTm, INIT_noPRIMEm, INIT_noIMTm

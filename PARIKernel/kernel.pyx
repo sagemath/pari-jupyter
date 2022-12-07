@@ -39,7 +39,7 @@ DEF PRIMELIMIT = 500000
 cdef sigjmp_buf context
 
 cdef void pari_recover(long numerr) nogil:
-    siglongjmp(context, -1)
+    siglongjmp(context, numerr)
 
 # Global PARI readline interface
 cdef pari_rl_interface pari_rl
@@ -126,6 +126,7 @@ class PARIKernel(Kernel):
         cdef int err
         cdef long t_ms
         cdef char last
+
         with nogil:
             err = sigsetjmp(context, 1)
             if err == 0:  # Initial sigsetjmp() call
@@ -135,7 +136,7 @@ class PARIKernel(Kernel):
                 t_ms = timer_delay(GP_DATA.T)
             sigaction(SIGINT, &old_sa, &sa)      # Restore Python SIGINT handler
 
-        if not err:  # success
+        if err == 0:  # success
             if not silent:
                 if t_ms and GP_DATA.chrono:
                     pari_puts(b"time = ")
@@ -163,6 +164,9 @@ class PARIKernel(Kernel):
                      'payload': [],
                      'user_expressions': {},
                     }
+
+            avma = av
+
         else:  # error (therefore no result)
             reply = {'status': 'error',
                      'execution_count': pari_nb_hist(),
@@ -171,7 +175,13 @@ class PARIKernel(Kernel):
                      'traceback': [],
                     }
 
-        avma = av
+            if err > 0:
+                # true error
+                avma = av
+            else:
+                # allocatemem
+                avma = pari_mainstack.top
+
         self.io.flush()
         return reply
 
