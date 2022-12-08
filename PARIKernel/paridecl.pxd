@@ -36,6 +36,10 @@ cdef extern from "pari/pari.h" nogil:
     long    timer_delay(pari_timer *T)
     long    timer_get(pari_timer *T)
     void    timer_start(pari_timer *T)
+
+    long    walltimer_start(pari_timer *T)
+    long    walltimer_delay(pari_timer *T)
+
     char*   gp_format_time(long delay)
 
     void    pari_puts(char*)
@@ -70,6 +74,7 @@ cdef extern from "pari/paripriv.h" nogil:
     ctypedef struct gp_data:
         int chrono
         pari_timer* T
+        pari_timer* Tw
 
     gp_data* GP_DATA
 

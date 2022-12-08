@@ -124,7 +124,7 @@ class PARIKernel(Kernel):
         sa.sa_handler = pari_sighandler
 
         cdef int err
-        cdef long t_ms
+        cdef long t_ms, wt_ms
         cdef char last
 
         with nogil:
@@ -132,8 +132,10 @@ class PARIKernel(Kernel):
             if err == 0:  # Initial sigsetjmp() call
                 sigaction(SIGINT, &sa, &old_sa)  # Handle SIGINT by PARI
                 timer_start(GP_DATA.T)
+                walltimer_start(GP_DATA.Tw)
                 result = gp_read_str_multiline(gp_code, &last)
                 t_ms = timer_delay(GP_DATA.T)
+                wt_ms = walltimer_delay(GP_DATA.Tw)
             sigaction(SIGINT, &old_sa, &sa)      # Restore Python SIGINT handler
 
         if err == 0:  # success
@@ -147,7 +149,7 @@ class PARIKernel(Kernel):
             # considered as "no result"
             if result is not gnil:
                 if store_history:
-                    pari_add_hist(result, t_ms, t_ms)
+                    pari_add_hist(result, t_ms, wt_ms)
 
                 if last != c';' and not silent:
                     content = {
