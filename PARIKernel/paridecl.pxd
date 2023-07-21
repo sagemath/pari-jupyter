@@ -24,6 +24,8 @@ cdef extern from "pari/pari.h" nogil:
     void    pari_init(size_t parisize, ulong maxprime)
     void    pari_sighandler(int sig)
 
+    void    gp_load_gprc()
+
     void    (*cb_pari_err_recover)(long)
 
     void    pari_free(void*)
