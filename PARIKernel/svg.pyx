@@ -30,7 +30,7 @@ def init_svg(kernel):
     pari_set_plot_engine(get_plot)
 
 
-cdef void get_plot(PARI_plot* T) nogil:
+cdef void get_plot(PARI_plot* T) noexcept nogil:
     # Values copied from src/graph/plotsvg.c in PARI sources
     T.width = 480
     T.height = 320
@@ -42,7 +42,7 @@ cdef void get_plot(PARI_plot* T) nogil:
     T.draw = draw
 
 
-cdef void draw(PARI_plot *T, GEN w, GEN x, GEN y) nogil:
+cdef void draw(PARI_plot *T, GEN w, GEN x, GEN y) noexcept nogil:
     global avma
     cdef pari_sp av = avma
     cdef char* svg = rect2svg(w, x, y, T)

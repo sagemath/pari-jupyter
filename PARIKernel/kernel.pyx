@@ -38,7 +38,7 @@ DEF PRIMELIMIT = 500000
 # Global setjmp() context for error handling
 cdef sigjmp_buf context
 
-cdef void pari_recover(long numerr) nogil:
+cdef void pari_recover(long numerr) noexcept nogil:
     siglongjmp(context, numerr)
 
 # Global PARI readline interface
