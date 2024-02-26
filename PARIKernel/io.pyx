@@ -31,22 +31,22 @@ cdef extern from "Python.h":
 cdef PARIKernelIO io
 
 
-cdef void out_putch(char c) with gil:
+cdef void out_putch(char c) noexcept with gil:
     io.stdout_stream.write(PyUnicode_FromStringAndSize(&c, 1))
 
-cdef void out_puts(const char* s) with gil:
+cdef void out_puts(const char* s) noexcept with gil:
     io.stdout_stream.write(PyUnicode_FromString(s))
 
-cdef void out_flush() with gil:
+cdef void out_flush() noexcept with gil:
     io.stdout_stream.flush()
 
-cdef void err_putch(char c) with gil:
+cdef void err_putch(char c) noexcept with gil:
     io.stderr_stream.write(PyUnicode_FromStringAndSize(&c, 1))
 
-cdef void err_puts(const char* s) with gil:
+cdef void err_puts(const char* s) noexcept with gil:
     io.stderr_stream.write(PyUnicode_FromString(s))
 
-cdef void err_flush() with gil:
+cdef void err_flush() noexcept with gil:
     io.stderr_stream.flush()
 
 
