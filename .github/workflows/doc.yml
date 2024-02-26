@@ -1,0 +1,35 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-manual:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          mamba-version: "*"
+          activate-environment: pari-jupyter-doc
+          environment-file: doc/environment.yml
+          python-version: 3.9
+          auto-activate-base: false
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+      - name: Install pari-jupyter
+        shell: bash -l {0}
+        run: pip install --verbose --no-index .
+      - name: Build documentation
+        shell: bash -l {0}
+        run: |
+          cd doc
+          make html SPHINXOPTS="-W"
