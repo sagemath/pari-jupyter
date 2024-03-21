@@ -5,7 +5,6 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pari-jupyter"
-version = "1.4.2"
 description = "A Jupyter kernel for PARI/GP"
 authors = [
     {name = "Jeroen Demeyer"},
@@ -17,7 +16,7 @@ dependencies = [
     "ipykernel",
 ]
 requires-python = ">=3.8"
-readme = "README.md"
+readme = "README.rst"
 license = {text = "GNU General Public License (GPL) version 3 or later"}
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -27,6 +26,12 @@ classifiers = [
     "Programming Language :: Cython",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
+dynamic = [
+    "version",
+]
 
 [project.urls]
 Homepage = "https://github.com/sagemath/pari-jupyter"
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}
