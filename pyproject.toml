@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools",
+            "Cython>=0.29"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pari-jupyter"
+version = "1.4.2"
+description = "A Jupyter kernel for PARI/GP"
+authors = [
+    {name = "Jeroen Demeyer"},
+]
+maintainers = [
+    {name = "SageMath developers", email = "sage-devel@googlegroups.com"},
+]
+dependencies = [
+    "ipykernel",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "GNU General Public License (GPL) version 3 or later"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: POSIX",
+    "Programming Language :: Cython",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+
+[project.urls]
+Homepage = "https://github.com/sagemath/pari-jupyter"

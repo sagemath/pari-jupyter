@@ -4,7 +4,6 @@ import os
 from glob import glob
 from setuptools import setup, Extension
 from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
-import PARIKernel
 
 kernelpath = os.path.join("share", "jupyter", "kernels", "pari_jupyter")
 nbextpath = os.path.join("share", "jupyter", "nbextensions", "gp-mode")
@@ -45,25 +44,6 @@ cmdclass['bdist_egg'] = no_egg
 
 
 setup(
-    name='pari-jupyter',
-    version=PARIKernel.__version__,
-    description='A Jupyter kernel for PARI/GP',
-    long_description=open("README.rst").read(),
-    long_description_content_type='text/x-rst',
-    platforms=["POSIX"],
-    author='Jeroen Demeyer',
-    author_email='pari-users@pari.math.u-bordeaux.fr',
-    license='GNU General Public License (GPL) version 3 or later',
-    url="https://github.com/sagemath/pari-jupyter",
-    classifiers=["Development Status :: 5 - Production/Stable",
-                 "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-                 "Operating System :: POSIX",
-                 "Programming Language :: Cython",
-                 "Intended Audience :: Science/Research",
-                 "Topic :: Scientific/Engineering :: Mathematics",
-                ],
-    install_requires=['ipykernel'],
-
     packages=['PARIKernel'],
     ext_modules=extensions,
     data_files=[(kernelpath, glob("spec/*")),
