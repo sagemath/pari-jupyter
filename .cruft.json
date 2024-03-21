@@ -1,0 +1,12 @@
+{
+  "template": "https://github.com/mkoeppe/sage",
+  "commit": "dad0afcadfffe2a7398a88e95fed90c5d18b6352",
+  "checkout": "sagemath-environment-cookiecutter",
+  "context": {
+    "cookiecutter": {
+      "project_name": "pari-jupyter",
+      "_template": "https://github.com/mkoeppe/sage"
+    }
+  },
+  "directory": "pkgs/sage-project-cookiecutter/sage_project_cookiecutter/sagemath-upstream-package-template"
+}
