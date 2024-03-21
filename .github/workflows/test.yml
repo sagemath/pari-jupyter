@@ -10,6 +10,11 @@ on:
 
 permissions: read-all
 
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-20.04
@@ -29,7 +34,7 @@ jobs:
           conda list
       - name: Install pari-jupyter
         shell: bash -l {0}
-        run: pip install --verbose --no-index .
+        run: pip install --verbose --no-build-isolation .
       - name: Run test
         shell: bash -l {0}
         run: |

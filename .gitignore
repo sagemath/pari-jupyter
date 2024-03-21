@@ -3,3 +3,4 @@ dist
 MANIFEST
 *.c
 *.pyc
+*.egg-info

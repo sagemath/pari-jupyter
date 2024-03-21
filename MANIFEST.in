@@ -1,2 +1,2 @@
-include LICENSE README.rst MANIFEST.in
-recursive-include PARIKernel *.py *.pyx *.pxd *.c
+recursive-include PARIKernel *.py *.pyx *.pxd
+recursive-exclude PARIKernel *.c
