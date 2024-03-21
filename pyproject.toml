@@ -34,4 +34,4 @@ dynamic = [
 Homepage = "https://github.com/sagemath/pari-jupyter"
 
 [tool.setuptools.dynamic]
-version = {file = "VERSION"}
+version = {attr = "PARIKernel.__version__"}
