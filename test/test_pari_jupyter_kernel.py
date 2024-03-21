@@ -6,6 +6,7 @@ Example use of jupyter_kernel_test, with tests for the default python3 kernel
 import unittest
 import jupyter_kernel_test as jkt
 
+
 class PARIKernelTests(jkt.KernelTests):
 
     # REQUIRED
@@ -97,6 +98,7 @@ class PARIKernelTests(jkt.KernelTests):
     # a code sample which should cause a `clear_output` message to be sent to
     # the client
     # code_clear_output = "from IPython.display import clear_output; clear_output()"
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
