@@ -1,4 +1,4 @@
-# This file lists the minimial dependencies needed to build and test
+# This file lists the minimal dependencies needed to build and test
 # pari-jupyter. Create a conda environment with these dependencies
 # preinstalled with:
 # conda env create -f environment.yml

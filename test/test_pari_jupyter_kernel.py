@@ -40,7 +40,7 @@ class PARIKernelTests(jkt.KernelTests):
     # ]
 
     # samples for testing code-completeness (used by console only)
-    # these samples should respectively be unambigiously complete statements
+    # these samples should respectively be unambiguously complete statements
     # (which should be executed on <enter>), incomplete statements or code
     # which should be identified as invalid
     # complete_code_samples = ['1', "print('hello, world')", "def f(x):\n  return x*2\n\n\n"]
@@ -78,7 +78,7 @@ class PARIKernelTests(jkt.KernelTests):
     # ]
 
     # test the support for searching/recalling history (used by console only)
-    # the history tests re-use the code blocks in `code_execute_result` above,
+    # the history tests reuse the code blocks in `code_execute_result` above,
     # so will not run if no test code is available
     # `code_history_pattern` is a glob-style pattern which should match at least
     # one code sample in `code_execute_result`
